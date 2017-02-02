@@ -136,4 +136,40 @@ describe('Component', () => {
       `.replace(/\s+/g, ''))
     })
   })
+
+  it('nesting', () => {
+    const res = {
+      status: 200,
+      ok: true
+    }
+
+    render((
+      <Match value={res}>
+        {({ doesNotExist, matches }) => [
+          matches({ status: 200 }, matches({ ok: true }, <Box name='content'/>)),
+        ]}
+      </Match>
+    ), node, () => {
+      expect(node.innerHTML).toBe(`
+        <div>content</div>
+      `.replace(/\s+/g, ''))
+    })
+  })
+
+  it('no fiber :(', () => {
+    render((
+      <Match value={5}>
+        {({ is, isNot }) => (
+          <div>
+            {is(5, <Box name='is' />)}
+            {isNot(5, <Box name='isNot' />)}
+          </div>
+        )}
+      </Match>
+    ), node, () => {
+      expect(node.innerHTML).toBe(`
+        <div><div>is</div></div>
+      `.replace(/\s+/g, ''))
+    })
+  })
 })

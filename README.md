@@ -10,8 +10,6 @@ npm install -S react-pattern-match
 
 Is this really pattern matching? No, but it is fun to pretend.
 
-**These examples are returning arrays which is only available in ReactDOMFiber. If you are not using ReactDOMFiber you need to wrap the return with a Component or Element.**
-
 ### Basic
 ```javascript
 const App = (props) => {
@@ -21,6 +19,24 @@ const App = (props) => {
         is(5, <IWillMount />),
         isNot(5, <IWillNotMount />)
       ]}
+    </Match>
+  )
+}
+```
+
+### Without Fiber
+**The other examples are returning arrays which is only available in ReactDOMFiber. If you are not using ReactDOMFiber you need to wrap the return with a Component or Element.**
+
+```javascript
+const App = (props) => {
+  return (
+    <Match value={5}>
+      {({ is, isNot }) => (
+        <div>
+          {is(5, <IWillMount />)}
+          {isNot(5, <IWillNotMount />)}
+        </div>
+      )}
     </Match>
   )
 }
@@ -38,6 +54,26 @@ const App = (props) => {
         matches({ ok: true }, <Content data={props.response.data} />),
         // Renders if response.ok is false
         matches({ ok: false }, <Error res={props.response} />)
+      ]}
+    </Match>
+  )
+}
+```
+
+### Nesting
+```javascript
+const App = (props) => {
+  return ( 
+    <Match value={props.response}>
+      {({ doesNotExist, matches }) => [
+        // Renders if response.status is 200 and response.ok is false
+        matches(
+          { status: 200 }, 
+          matches(
+            { ok: true }, 
+            <Box name='content'/>
+          )
+        )
       ]}
     </Match>
   )
