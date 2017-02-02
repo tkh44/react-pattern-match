@@ -1,7 +1,7 @@
 {
   "name": "react-pattern-match",
   "version": "1.0.1",
-  "description": "react-pattern-match React component",
+  "description": "Declaritive component for deciding what to render",
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": [
@@ -30,11 +30,25 @@
     "react": "^16.0.0-alpha.0",
     "react-dom": "^16.0.0-alpha.0"
   },
-  "author": "",
-  "homepage": "",
+  "author": "Kye Hohenberger",
+  "homepage": "https://github.com/tkh44/react-pattern-match#readme",
   "license": "MIT",
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tkh44/react-pattern-match.git"
+  },
   "keywords": [
-    "react-component"
-  ]
+    "react-component",
+    "react",
+    "match",
+    "pattern",
+    "expect",
+    "testing"
+  ],
+  "directories": {
+    "test": "tests"
+  },
+  "bugs": {
+    "url": "https://github.com/tkh44/react-pattern-match/issues"
+  }
 }
