@@ -15,25 +15,32 @@ Is this really pattern matching? No, but it is fun to pretend.
 ### Basic
 ```javascript
 const App = (props) => {
-  <Match value={5}>
-    {({ is, isNot }) => [
-      is(5, <IWillMount />),
-      isNot(5, <IWillNotMount />)
-    ]}
-  </Match>
+  return (
+    <Match value={5}>
+      {({ is, isNot }) => [
+        is(5, <IWillMount />),
+        isNot(5, <IWillNotMount />)
+      ]}
+    </Match>
+  )
 }
 ```
 
-### Basic
+### Fun with matches
 ```javascript
 const App = (props) => {
-  <Match value={props.response}>
-    {({ doesNotExist, matches }) => [
-      doesNotExist(<Loading />),
-      matches({ ok: true }, <Content data={props.response.data} />),
-      matches({ ok: false }, <Error res={props.response} />)
-    ]}
-  </Match>
+  return ( 
+    <Match value={props.response}>
+      {({ doesNotExist, matches }) => [
+        // Renders if response does not exist
+        doesNotExist(<Loading />),
+        // Renders if response.ok is true
+        matches({ ok: true }, <Content data={props.response.data} />),
+        // Renders if response.ok is false
+        matches({ ok: false }, <Error res={props.response} />)
+      ]}
+    </Match>
+  )
 }
 ```
 
@@ -42,10 +49,10 @@ const App = (props) => {
 const Box = (props) => (<div>{props.name}</div>)
 
 const App = (props) => {
-  <Match value={4}>
+  return <Match value={4}>
     {({ exists, doesNotExist, is, isNot, equals, doesNotEqual, isTypeOf, notTypeOf, matches, doesNotMatch, lessThan, lessThanOrEqualTo, greaterThan, greaterThanOrEqualTo }) => [
         exists(<Box name='exists'/>),
-        doesNotExist(<Box name='doesNotExist'/>),
+        doesNotExist(<Box name='doesNotExist'/>), // Won't render
         is(4, <Box name='is'/>),
         isNot(6, <Box name='isNot'/>),
         equals(Number('4'), <Box name='equals'/>), // uses is-equal
