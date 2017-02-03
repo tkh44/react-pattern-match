@@ -14,10 +14,13 @@ Is this really pattern matching? No, but it is fun to pretend.
 ```javascript
 const App = (props) => {
   return (
-    <Match value={5}>
-      {({ is, isNot }) => [
+    <Match value={props.number}>
+      {({ assert, is, isNot }) => [
+        assert(props.number === 5, <IWillMount />),
+        assert(props.number !== 5, <IWillNotMount />),
+        assert((val) => val === 5, <IWillMount />),
         is(5, <IWillMount />),
-        isNot(5, <IWillNotMount />)
+        isNot(5, <IWillNotMount />),
       ]}
     </Match>
   )
@@ -86,13 +89,12 @@ const Box = (props) => (<div>{props.name}</div>)
 
 const App = (props) => {
   return <Match value={4}>
-    {({ exists, doesNotExist, is, isNot, equals, doesNotEqual, isTypeOf, notTypeOf, matches, doesNotMatch, lessThan, lessThanOrEqualTo, greaterThan, greaterThanOrEqualTo }) => [
+    {({ assert, exists, doesNotExist, is, isNot, equals, doesNotEqual, isTypeOf, notTypeOf, matches, doesNotMatch, lessThan, lessThanOrEqualTo, greaterThan, greaterThanOrEqualTo }) => [
+        assert((val) => val === 4, <Box name='assert'/>),
         exists(<Box name='exists'/>),
         doesNotExist(<Box name='doesNotExist'/>), // Won't render
         is(4, <Box name='is'/>),
         isNot(6, <Box name='isNot'/>),
-        equals(Number('4'), <Box name='equals'/>), // uses is-equal
-        doesNotEqual(6, <Box name='doesNotEqual'/>), // uses is-equal
         isTypeOf('number', <Box name='isTypeOf'/>),
         notTypeOf('function', <Box name='notTypeOf'/>),
         matches(4, <Box name='matches'/>), // uses tmatch

@@ -1,17 +1,15 @@
 import { Component, Children, createElement } from 'react'
-import isEqual from 'is-equal'
 import tmatch from 'tmatch'
 
 export default class Match extends Component {
   constructor (props, context) {
     super(props, context)
 
+    this.assert = this.assert.bind(this)
     this.exists = this.exists.bind(this)
     this.doesNotExist = this.doesNotExist.bind(this)
     this.is = this.is.bind(this)
     this.isNot = this.isNot.bind(this)
-    this.equals = this.equals.bind(this)
-    this.doesNotEqual = this.doesNotEqual.bind(this)
     this.isTypeOf = this.isTypeOf.bind(this)
     this.notTypeOf = this.notTypeOf.bind(this)
     this.matches = this.matches.bind(this)
@@ -25,12 +23,11 @@ export default class Match extends Component {
   render () {
     const childFn = this.props.children
     return childFn({
+      assert: this.assert,
       exists: this.exists,
       doesNotExist: this.doesNotExist,
       is: this.is,
       isNot: this.isNot,
-      equals: this.equals,
-      doesNotEqual: this.doesNotEqual,
       isTypeOf: this.isTypeOf,
       notTypeOf: this.notTypeOf,
       matches: this.matches,
@@ -40,6 +37,16 @@ export default class Match extends Component {
       greaterThan: this.greaterThan,
       greaterThanOrEqualTo: this.greaterThanOrEqualTo
     })
+  }
+
+  assert (fn, ...rest) {
+    let result = typeof fn === 'function'
+      ? fn(this.props.value)
+      : !!fn
+
+    if (result) {
+      return rest
+    }
   }
 
   exists (...rest) {
@@ -62,18 +69,6 @@ export default class Match extends Component {
 
   isNot (value, ...rest) {
     if (value !== this.props.value) {
-      return rest
-    }
-  }
-
-  equals (value, ...rest) {
-    if (isEqual(value, this.props.value)) {
-      return rest
-    }
-  }
-
-  doesNotEqual (value, ...rest) {
-    if (!isEqual(value, this.props.value)) {
       return rest
     }
   }
