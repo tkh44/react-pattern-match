@@ -19,7 +19,6 @@
     "test:watch": "nwb test-react --server"
   },
   "dependencies": {
-    "is-equal": "^1.5.4",
     "tmatch": "^3.0.0"
   },
   "peerDependencies": {
