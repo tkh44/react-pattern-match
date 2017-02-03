@@ -63,6 +63,30 @@ const App = (props) => {
 }
 ```
 
+### Use as a factory
+In situations where the same value is tested against multiple times, create a factory and pass it down.
+```javascript
+const App = ({ response }) => {
+  const resMatch = (cb) => h(Match, { value: response }, cb)
+
+  return <ResponseHandler resMatch={resMatch} response={response} />
+}
+
+const ResponseHandler = ({ resMatch }) => {  
+  return resMatch(({doesNotExist, matches}) => [
+    doesNotExist(<Loading response={response} />),
+    matches({ ok: false }, <Error response={response} />),
+    matches({ ok: true }, <Content resMatch={resMatch} response={response} />)
+  ])
+}
+
+const Content = ({ resMatch, response }) => {
+  return resMatch((assert) => [
+    assert((res) => res.data && res.data.id, <Room room={response.data} />)
+  ])
+}
+```
+
 ### Nesting
 ```javascript
 const App = (props) => {

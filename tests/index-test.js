@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 import expect from 'expect'
 import React from 'react'
 const { createElement: h } = React
@@ -18,7 +19,7 @@ describe('Component', () => {
     unmountComponentAtNode(node)
   })
 
-  it('all fns are present', () => {
+  it('all fns are present', (done) => {
     render((
       <Match value={4}>
         {({ assert, exists, doesNotExist, is, isNot, isTypeOf, notTypeOf, matches, doesNotMatch, lessThan, lessThanOrEqualTo, greaterThan, greaterThanOrEqualTo }) => [
@@ -52,10 +53,12 @@ describe('Component', () => {
         <div>greaterThan</div>
         <div>greaterThanOrEqualTo</div>
       `.replace(/\s+/g, ''))
+
+      done()
     })
   })
 
-  it('negate value', () => {
+  it('negate value', (done) => {
     render((
       <Match value={6}>
         {({ exists, doesNotExist, is, isNot, equals, doesNotEqual, isTypeOf, notTypeOf, matches, doesNotMatch, lessThan, lessThanOrEqualTo, greaterThan, greaterThanOrEqualTo }) => [
@@ -79,10 +82,12 @@ describe('Component', () => {
         <div>greaterThan</div>
         <div>greaterThanOrEqualTo</div>
       `.replace(/\s+/g, ''))
+
+      done()
     })
   })
 
-  it('value is empty', () => {
+  it('value is empty', (done) => {
     render((
       <Match value={undefined}>
         {({ exists, doesNotExist, is, isNot, equals, doesNotEqual, isTypeOf, notTypeOf, matches, doesNotMatch, lessThan, lessThanOrEqualTo, greaterThan, greaterThanOrEqualTo }) => [
@@ -107,10 +112,12 @@ describe('Component', () => {
         <div>notTypeOf</div>
         <div>doesNotMatch</div>
       `.replace(/\s+/g, ''))
+
+      done()
     })
   })
 
-  it('matches works', () => {
+  it('matches works', (done) => {
     const res = {
       status: 404,
       ok: false
@@ -128,10 +135,12 @@ describe('Component', () => {
       expect(node.innerHTML).toBe(`
         <div>error</div>
       `.replace(/\s+/g, ''))
+
+      done()
     })
   })
 
-  it('nesting', () => {
+  it('nesting', (done) => {
     const res = {
       status: 200,
       ok: true
@@ -140,17 +149,19 @@ describe('Component', () => {
     render((
       <Match value={res}>
         {({ doesNotExist, matches }) => [
-          matches({ status: 200 }, matches({ ok: true }, <Box name='content'/>)),
+          matches({ status: 200 }, matches({ ok: true }, <Box name='content'/>))
         ]}
       </Match>
     ), node, () => {
       expect(node.innerHTML).toBe(`
         <div>content</div>
       `.replace(/\s+/g, ''))
+
+      done()
     })
   })
 
-  it('assert', () => {
+  it('assert', (done) => {
     const res = {
       status: 200,
       ok: true
@@ -170,10 +181,12 @@ describe('Component', () => {
         <div>content</div>
         <div>content</div>
       `.replace(/\s+/g, ''))
+
+      done()
     })
   })
 
-  it('no fiber :(', () => {
+  it('no fiber :(', (done) => {
     require('react-dom').render((
       <Match value={5}>
         {({ is, isNot }) => (
@@ -185,10 +198,12 @@ describe('Component', () => {
       </Match>
     ), node, () => {
       expect(node.innerHTML).toBe('<div data-reactroot=""><div>is</div></div>')
+
+      done()
     })
   })
 
-  it('no jsx', () => {
+  it('no jsx', (done) => {
     render(
       h(Match, { value: 5 }, ({ is, isNot }) => [
         is(
@@ -201,6 +216,68 @@ describe('Component', () => {
         )
       ]), node, () => {
         expect(node.innerHTML).toBe('<div>is</div>')
+
+        done()
+      }
+    )
+  })
+
+  it('using factories', (done) => {
+    const response = {
+      status: 200,
+      ok: true
+    }
+
+    const match = (cb) => h(Match, { value: response }, cb)
+    const renderLoading = () => h(Box, { name: 'loading' })
+    const renderError = () => h(Box, { name: 'error' })
+    const renderContent = () => h(Box, { name: 'content' })
+
+    render(
+      match(({doesNotExist, matches}) => [
+        doesNotExist(renderLoading()),
+        matches({ ok: false }, renderError()),
+        matches({ status: 200 }, renderContent())
+      ]), node, () => {
+        expect(node.innerHTML).toBe('<div>content</div>')
+
+        done()
+      }
+    )
+  })
+
+  it('match factory can be passed down', (done) => {
+    let match
+    const res = {
+      status: 200,
+      ok: true
+    }
+
+    const Parent = ({ response }) => {
+      match = (cb) => h(Match, {value: response}, cb)
+
+      return <Child match={match} response={response}/>
+    }
+
+    const Child = (props) => {
+      expect(props.match).toBe(match)
+
+      return props.match(({doesNotExist, matches}) => [
+        doesNotExist(<Box name='loading'/>),
+        matches({ok: false}, <Box name='error'/>),
+        matches({ok: true}, <Box match={match} name='content'/>)
+      ])
+    }
+
+    render(
+      (
+        <Parent response={res} />
+      ),
+      node,
+      () => {
+        expect(node.innerHTML).toBe('<div>content</div>')
+
+        done()
       }
     )
   })
