@@ -1,8 +1,8 @@
 # react-pattern-match
 
-[![Travis][build-badge]][build]
-[![npm package][npm-badge]][npm]
-[![Coveralls][coveralls-badge]][coveralls]
+[![npm version](https://badge.fury.io/js/react-nes.svg)](https://badge.fury.io/js/react-pattern-match)
+[![Build Status](https://travis-ci.org/tkh44/react-pattern-match.svg?branch=master)](https://travis-ci.org/tkh44/react-pattern-match)
+[![codecov](https://codecov.io/gh/tkh44/react-pattern-match/branch/master/graph/badge.svg)](https://codecov.io/gh/tkh44/react-pattern-match)
 
 ```bash
 npm install -S react-pattern-match
@@ -111,13 +111,3 @@ const App = (props) => {
 
 #### Thanks
 I got the test function ideas from https://github.com/mjackson/expect
-
-
-[build-badge]: https://img.shields.io/travis/user/repo/master.png?style=flat-square
-[build]: https://travis-ci.org/tkh44/react-pattern-match
-
-[npm-badge]: https://img.shields.io/npm/v/npm-package.png?style=flat-square
-[npm]: https://www.npmjs.org/package/react-pattern-match
-
-[coveralls-badge]: https://img.shields.io/coveralls/user/repo/master.png?style=flat-square
-[coveralls]: https://coveralls.io/github/tkh44/react-pattern-match
