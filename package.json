@@ -1,6 +1,6 @@
 {
   "name": "react-pattern-match",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Declaritive component for deciding what to render",
   "jsnext:main": "dist/react-pattern-match.es.js",
   "module": "dist/react-pattern-match.es.js",
