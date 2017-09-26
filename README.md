@@ -33,6 +33,11 @@ const App = (props) => {
 
 `Match` uses [`lodash.isEqual`](https://lodash.com/docs/#isEqual) to compare a given value vs one provided in the render callback.
 
+*From the lodash docs*
+> Performs a deep comparison between two values to determine if they are equivalent.
+  
+  Note: This method supports comparing arrays, array buffers, booleans, date objects, error objects, maps, numbers, Object objects, regexes, sets, strings, symbols, and typed arrays. Object objects are compared by their own, not inherited, enumerable properties. Functions and DOM nodes are compared by strict equality, i.e. ===.
+
 **props**
 
 - `value`: **any** - Base value to compare against
@@ -40,6 +45,7 @@ const App = (props) => {
 - `render`: **function** - Function that receives one argument, `equal`
     
     `equal` is a function that accepts 2 arguments:
+        
         - `test`: **any** - Value to compare against value supplied in props
         - `render`: **function** - Function that returns children. Called only if `lodash.isEqual(value, test)`
 
