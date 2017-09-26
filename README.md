@@ -10,96 +10,61 @@ npm install -S react-pattern-match
 
 Is this really pattern matching? No, but it is fun to pretend.
 
+**For React 16 and above only**
+
+
 ### Basic
+
 ```javascript
 const App = (props) => {
   return (
-    <Match value={props.number}>
-      {({ assert, is, isNot }) => [
-        assert(props.number === 5, <IWillMount />),
-        assert(props.number !== 5, <IWillNotMount />),
-        assert((val) => val === 5, <IWillMount />),
-        is(5, <IWillMount />),
-        isNot(5, <IWillNotMount />),
+    <Match value={4}>
+      {eq => [
+        eq(4, () => <Box name="I will render" />),
+        eq(5, () => <Box name="I will not render" />),
+        eq(() => 4, () => <Box name="I will render, fn value is equal" />)
       ]}
     </Match>
   )
 }
 ```
 
-### Without Fiber
-**The other examples are returning arrays which is only available in ReactDOMFiber. If you are not using ReactDOMFiber you need to wrap the return with a Component or Element.**
+## Match
+
+`Match` uses [`lodash.isEqual`](https://lodash.com/docs/#isEqual) to compare a given value vs one provided in the render callback.
+
+**props**
+
+- `value`: **any** - Base value to compare against
+
+- `render`: **function** - Function that receives one argument, `equal`
+    
+    `equal` is a function that accepts 2 arguments:
+        - `test`: **any** - Value to compare against value supplied in props
+        - `render`: **function** - Function that returns children. Called only if `lodash.isEqual(value, test)`
+
+
+### Function as Value
+
+If the `value` prop or `test` value are functions they will be called before being passed to `lodash.isEqual`.
 
 ```javascript
+function getValue () {
+  return ['a', 'b', 'c']
+}
+
 const App = (props) => {
   return (
-    <Match value={5}>
-      {({ is, isNot }) => (
-        <div>
-          {is(5, <IWillMount />)}
-          {isNot(5, <IWillNotMount />)}
-        </div>
-      )}
-    </Match>
-  )
-}
-```
-
-### Fun with matches
-```javascript
-const App = (props) => {
-  return ( 
-    <Match value={props.response}>
-      {({ doesNotExist, matches }) => [
-        // Renders if response does not exist
-        doesNotExist(<Loading />),
-        // Renders if response.ok is true
-        matches({ ok: true }, <Content data={props.response.data} />),
-        // Renders if response.ok is false
-        matches({ ok: false }, <Error res={props.response} />)
-      ]}
-    </Match>
-  )
-}
-```
-
-### Use as a factory
-In situations where the same value is tested against multiple times, create a factory and pass it down.
-```javascript
-const App = ({ response }) => {
-  const resMatch = (cb) => h(Match, { value: response }, cb)
-
-  return <ResponseHandler resMatch={resMatch} response={response} />
-}
-
-const ResponseHandler = ({ resMatch }) => {  
-  return resMatch(({doesNotExist, matches}) => [
-    doesNotExist(<Loading response={response} />),
-    matches({ ok: false }, <Error response={response} />),
-    matches({ ok: true }, <Content resMatch={resMatch} response={response} />)
-  ])
-}
-
-const Content = ({ resMatch, response }) => {
-  return resMatch((assert) => [
-    assert((res) => res.data && res.data.id, <Room room={response.data} />)
-  ])
-}
-```
-
-### Nesting
-```javascript
-const App = (props) => {
-  return ( 
-    <Match value={props.response}>
-      {({ doesNotExist, matches }) => [
-        // Renders if response.status is 200 and response.ok is false
-        matches(
-          { status: 200 }, 
-          matches(
-            { ok: true }, 
-            <Box name='content'/>
-          )
+    <Match value={getValue}>
+      {eq => [
+        eq(['a', 'b', 'c'], () => <Box name="should match array" />),
+        eq(['a', 'b', 'c', 'd'], () =>
+          <Box name="should not match array" />
+        ),
+        eq(() => ['a', 'b', 'c'], () => <Box name="should match fn" />),
+        eq(
+          () => ['a', 'b', 'c', 'd'],
+          () => <Box name="should not match fn" />
         )
       ]}
     </Match>
@@ -107,31 +72,3 @@ const App = (props) => {
 }
 ```
 
-### All available functions
-```javascript
-const Box = (props) => (<div>{props.name}</div>)
-
-const App = (props) => {
-  return <Match value={4}>
-    {({ assert, exists, doesNotExist, is, isNot, equals, doesNotEqual, isTypeOf, notTypeOf, matches, doesNotMatch, lessThan, lessThanOrEqualTo, greaterThan, greaterThanOrEqualTo }) => [
-        assert((val) => val === 4, <Box name='assert'/>),
-        exists(<Box name='exists'/>),
-        doesNotExist(<Box name='doesNotExist'/>), // Won't render
-        is(4, <Box name='is'/>),
-        isNot(6, <Box name='isNot'/>),
-        isTypeOf('number', <Box name='isTypeOf'/>),
-        notTypeOf('function', <Box name='notTypeOf'/>),
-        matches(4, <Box name='matches'/>), // uses tmatch
-        doesNotMatch(6, <Box name='doesNotMatch'/>),// uses tmatch
-        lessThan(5, <Box name='lessThan'/>),
-        lessThanOrEqualTo(4, <Box name='lessThanOrEqualTo'/>),
-        greaterThan(3, <Box name='greaterThan'/>),
-        greaterThanOrEqualTo(4, <Box name='greaterThanOrEqualTo'/>)
-    ]}
-  </Match>
-}
-```
-
-
-#### Thanks
-I got the test function ideas from https://github.com/mjackson/expect

@@ -2,32 +2,58 @@
   "name": "react-pattern-match",
   "version": "2.0.1",
   "description": "Declaritive component for deciding what to render",
-  "main": "lib/index.js",
-  "module": "es/index.js",
+  "jsnext:main": "dist/react-pattern-match.es.js",
+  "module": "dist/react-pattern-match.es.js",
+  "main": "dist/react-pattern-match.js",
+  "umd:main": "dist/react-pattern-match.umd.js",
   "files": [
-    "css",
-    "es",
-    "lib",
-    "umd"
+    "dist",
+    "src"
   ],
   "scripts": {
-    "build": "nwb build-react-component",
-    "clean": "nwb clean-module && npm clean-demo",
-    "start": "nwb serve-react-demo",
-    "test": "nwb test-react",
-    "test:coverage": "nwb test-react --coverage",
-    "test:watch": "nwb test-react --server"
+    "build": "npm-run-all clean -p rollup -p minify:* -s size",
+    "clean": "rimraf dist",
+    "test": "standard src test && jest --coverage",
+    "test:watch": "jest --watch",
+    "rollup": "rollup -c",
+    "minify:cjs": "uglifyjs $npm_package_main -cm toplevel -o $npm_package_main -p relative --in-source-map ${npm_package_main}.map --source-map ${npm_package_main}.map",
+    "minify:umd": "uglifyjs $npm_package_umd_main -cm -o $npm_package_umd_main -p relative --in-source-map ${npm_package_umd_main}.map --source-map ${npm_package_umd_main}.map",
+    "size": "echo \"Gzipped Size: $(strip-json-comments --no-whitespace $npm_package_main | gzip-size)\"",
+    "release": "npm run test && npm run build && npm version patch && npm publish && git push --tags"
   },
   "dependencies": {
-    "tmatch": "^3.0.0"
+    "lodash.isequal": "^4.5.0"
   },
   "peerDependencies": {
     "react": ""
   },
   "devDependencies": {
-    "nwb": "0.15.x",
-    "react": "^16.0.0-alpha.0",
-    "react-dom": "^16.0.0-alpha.0"
+    "babel-eslint": "^7.2.3",
+    "babel-jest": "^20.0.1",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.4.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "gzip-size-cli": "^2.0.0",
+    "hapi": "^16.1.0",
+    "jest": "^20.0.1",
+    "jest-glamor-react": "^3.1.0",
+    "npm-run-all": "^4.0.2",
+    "pretty-bytes-cli": "^2.0.0",
+    "prop-types": "^15.5.10",
+    "raw-loader": "^0.5.1",
+    "react": "^16.0.0-alpha.12",
+    "react-addons-test-utils": "^15.5.1",
+    "react-dom": "^16.0.0-alpha.12",
+    "react-test-renderer": "^16.0.0-alpha.12",
+    "rimraf": "^2.6.1",
+    "rollup": "^0.45.2",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^8.1.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "standard": "^10.0.2",
+    "strip-json-comments-cli": "^1.0.1",
+    "uglify-js": "2.8.23"
   },
   "author": "Kye Hohenberger",
   "homepage": "https://github.com/tkh44/react-pattern-match#readme",
@@ -49,5 +75,15 @@
   },
   "bugs": {
     "url": "https://github.com/tkh44/react-pattern-match/issues"
+  },
+  "eslintConfig": {
+    "extends": "standard",
+    "parser": "babel-eslint"
+  },
+  "standard": {
+    "parser": "babel-eslint",
+    "ignore": [
+      "/dist/"
+    ]
   }
 }

@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`react-pattern-match renders 1`] = `
+Array [
+  <div
+    name="int"
+/>,
+  <div
+    name="fn"
+/>,
+]
+`;
+
+exports[`react-pattern-match value is fn 1`] = `
+Array [
+  <div
+    name="should match array"
+/>,
+  <div
+    name="should match fn"
+/>,
+]
+`;
