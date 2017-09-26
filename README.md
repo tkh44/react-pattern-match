@@ -18,13 +18,14 @@ Is this really pattern matching? No, but it is fun to pretend.
 ```javascript
 const App = (props) => {
   return (
-    <Match value={4}>
-      {eq => [
+    <Match 
+      value={4}
+      render={eq => [
         eq(4, () => <Box name="I will render" />),
         eq(5, () => <Box name="I will not render" />),
         eq(() => 4, () => <Box name="I will render, fn value is equal" />)
-      ]}
-    </Match>
+      ]} 
+    />
   )
 }
 ```
@@ -61,8 +62,9 @@ function getValue () {
 
 const App = (props) => {
   return (
-    <Match value={getValue}>
-      {eq => [
+    <Match
+      value={getValue}
+      render={eq => [
         eq(['a', 'b', 'c'], () => <Box name="should match array" />),
         eq(['a', 'b', 'c', 'd'], () =>
           <Box name="should not match array" />
@@ -73,7 +75,7 @@ const App = (props) => {
           () => <Box name="should not match fn" />
         )
       ]}
-    </Match>
+    />
   )
 }
 ```
